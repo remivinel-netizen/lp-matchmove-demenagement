@@ -55,28 +55,48 @@ Tunnel en 4 étapes, défini dans `quoteForm` (`src/data/content.ts`) :
 Ajouter ou déplacer un champ se fait uniquement dans `quoteForm` ; le rendu, la
 validation et la navigation s'adaptent automatiquement.
 
-> ⚠️ **Le lead n'est envoyé nulle part pour l'instant.** Le tunnel est
-> fonctionnel de bout en bout (validation, honeypot, tracking UTM, redirection
-> vers `/merci`), mais l'appel réseau est neutralisé : le payload est
-> simplement affiché dans la console.
+Le formulaire envoie le lead à `POST /api/lead`, une Cloudflare Pages Function
+(`functions/api/lead.ts`) qui le valide puis le relaie vers un webhook Make.
+L'URL du webhook reste côté serveur : elle n'apparaît jamais dans le bundle
+client, et il n'y a aucun souci de CORS.
 
-### Brancher l'envoi des leads
+### Mise en service
 
-1. Créer `functions/api/lead.ts` (Cloudflare Pages Function) qui relaie le
-   payload JSON vers le webhook Make.
-2. Déclarer le secret `MAKE_WEBHOOK_URL` dans Cloudflare Pages
-   (*Settings → Variables and Secrets*, Production **et** Preview), et dans
-   `.dev.vars` en local.
-3. Dans `src/components/QuoteForm.astro`, remplacer `const LEAD_ENDPOINT = null`
-   par `'/api/lead'`.
+Le secret **`MAKE_WEBHOOK_URL`** doit être déclaré dans Cloudflare Pages
+(*Settings → Variables and Secrets*), en **Production et en Preview** :
 
-Le projet `lp-matchmove-debarras` contient une implémentation de référence.
+```
+MAKE_WEBHOOK_URL = https://hook.eu2.make.com/xxxxxxxxxxxx
+```
+
+Sans lui, `/api/lead` renvoie `500 webhook_not_configured` et le formulaire
+affiche son message d'erreur avec le numéro de téléphone. En local, copier
+`.dev.vars.example` en `.dev.vars` (ignoré par git) puis lancer
+`npm run cf:preview`.
+
+### Ce que la Function contrôle
+
+- corps rejeté sur `Content-Length` **avant** d'être bufferisé (20 Ko max)
+- honeypot `_hp` et horodatage `_t` obligatoires ; soumission en moins de
+  3 secondes rejetée
+- champs obligatoires présents et plafonnés en longueur avant toute regex
+- email, codes postaux de départ et d'arrivée (5 chiffres), téléphone
+  (9 chiffres minimum)
+- payload reconstruit par **allowlist** : aucune clé arbitraire ne part vers
+  Make, et les valeurs commençant par `=`, `+` ou `@` sont neutralisées
+  (injection de formule tableur)
+
+Cloudflare ajoute `ip`, `country` et `received_at` ; `_hp` et `_t` ne sont pas
+transmis à Make.
+
+> Ajouter un champ obligatoire au formulaire implique de l'ajouter aussi à
+> `REQUIRED_FIELDS` **et** au `payload` dans `functions/api/lead.ts`, sinon il
+> ne remontera pas dans Make.
 
 ## Non installé volontairement
 
 | Brique                     | Où la brancher                                  |
 | -------------------------- | ------------------------------------------------ |
-| API lead / webhook Make    | `functions/api/lead.ts` + `QuoteForm.astro`      |
 | Personnalisation géo       | `functions/_middleware.ts` (attributs `data-geo` déjà en place dans `HeroV2` et `TrustBand`) |
 | GTM, Clarity, CMP          | `src/layouts/Base.astro` (emplacement commenté)  |
 

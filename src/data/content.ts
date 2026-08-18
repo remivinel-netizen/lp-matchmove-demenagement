@@ -359,7 +359,7 @@ export const quoteForm: { steps: { title: string; fields: Field[] }[] } = {
           inputmode: 'numeric',
           pattern: '[0-9]{5}',
           half: true,
-          note: 'Si vous ne la connaissez pas encore, indiquez la ville visée.',
+          note: 'Le code postal de la commune visée suffit.',
         },
         {
           type: 'choice',

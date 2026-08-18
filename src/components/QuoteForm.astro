@@ -426,26 +426,14 @@ const rgpdHtml = `${formLabels.rgpdBefore}<a href="${site.legal.donnees}" target
       };
 
       try {
-        /* ------------------------------------------------------------------
-           Branchement du lead — À CÂBLER
-           Aucune intégration n'est active pour l'instant : le tunnel est
-           fonctionnel de bout en bout et redirige vers /merci.
-           Pour l'activer : créer functions/api/lead.ts (Cloudflare Pages
-           Functions) qui relaie vers le webhook Make, puis remplacer null
-           par '/api/lead' ci-dessous.
-           ------------------------------------------------------------------ */
-        const LEAD_ENDPOINT: string | null = null;
-
-        if (LEAD_ENDPOINT) {
-          const response = await fetch(LEAD_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        } else {
-          console.info('[devis] lead prêt à être envoyé', payload);
-        }
+        /* functions/api/lead.ts valide le lead puis le relaie vers le webhook
+           Make (secret MAKE_WEBHOOK_URL, côté serveur). */
+        const response = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         push({ event: 'lead_submitted', form: 'devis_demenagement' });
         // La page /merci sert de signal de conversion (page vue) pour Google Ads / GTM.
