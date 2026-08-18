@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro';
+import { v2 } from '../data/content';
+---
+
+<section class="section section--tight" id="prix">
+  <div class="container">
+    <div class="pricing">
+      <div class="section-head" style="margin-bottom: 32px;">
+        <h2 class="title-sm">{v2.pricing.title}</h2>
+      </div>
+
+      <dl class="pricing__table">
+        {
+          v2.pricing.rows.map((row) => (
+            <div class="pricing__row">
+              <dt>{row.label}</dt>
+              <dd>{row.price}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="pricing__factors-title">Trois facteurs font le prix :</p>
+      <ul class="pricing__factors">
+        {
+          v2.pricing.factors.map((factor) => (
+            <li>
+              <Icon name="check" size={16} />
+              {factor}
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="pricing__closing">{v2.pricing.closing}</p>
+
+      <div class="section-cta">
+        <a class="btn btn--primary" href="#devis" data-cta="pricing">{v2.pricing.cta}</a>
+      </div>
+    </div>
+  </div>
+</section>

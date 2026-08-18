@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import HeaderLite from '../components/HeaderLite.astro';
+import HeroV2 from '../components/HeroV2.astro';
+import TrustBand from '../components/TrustBand.astro';
+import Situations from '../components/Situations.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Pricing from '../components/Pricing.astro';
+import Guarantees from '../components/Guarantees.astro';
+import Reviews from '../components/Reviews.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+import Footer from '../components/Footer.astro';
+import StickyCta from '../components/StickyCta.astro';
+import { v2 } from '../data/content';
+---
+
+<Base title={v2.title} description={v2.description} noindex>
+  <HeaderLite logoHref="#devis" />
+  <main>
+    <HeroV2 />
+    <TrustBand />
+    <Situations />
+    <HowItWorks />
+    <Pricing />
+    <Guarantees />
+    <Reviews heading={v2.reviewsTitle} limit={3} flat />
+    <Faq heading="Questions fréquentes" items={v2.faq} />
+    <FinalCta dark title={v2.finalCta.title} text={v2.finalCta.text} cta={v2.finalCta.cta} />
+  </main>
+  <Footer />
+  <StickyCta />
+</Base>

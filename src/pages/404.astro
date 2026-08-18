@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import HeaderLite from '../components/HeaderLite.astro';
+import Footer from '../components/Footer.astro';
+
+/* La présence d'un 404.html dans dist désactive le fallback SPA de Cloudflare
+   Pages : les URLs inconnues renvoient un vrai 404 au lieu de servir l'index. */
+---
+
+<Base title="Page introuvable — MatchMove" noindex>
+  <HeaderLite />
+  <main>
+    <section class="section merci">
+      <div class="container">
+        <div class="merci__card">
+          <h1 class="title-sm">Cette page n'existe pas.</h1>
+          <p class="merci__lead">
+            Le lien que vous avez suivi est peut-être erroné. Vous pouvez estimer votre déménagement
+            gratuitement en 2 minutes depuis notre page d'accueil.
+          </p>
+          <p style="margin-top: 24px;">
+            <a class="btn btn--primary" href="/">Estimer mon déménagement</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

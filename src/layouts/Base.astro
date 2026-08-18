@@ -1,0 +1,92 @@
+---
+import '@fontsource-variable/dm-sans';
+import '../styles/global.css';
+import { site, faq } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+const { title = site.title, description = site.description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://matchmove.fr');
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'MovingCompany',
+  name: site.name,
+  description: site.description,
+  telephone: site.phone,
+  email: site.email,
+  url: canonical.href,
+  image: new URL('/assets/logo.png', canonical).href,
+  areaServed: { '@type': 'Country', name: 'France' },
+  priceRange: '€€',
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    opens: '08:00',
+    closes: '20:00',
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#57A479" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={new URL('/assets/hero.jpg', canonical).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" as="image" href="/assets/hero.jpg" fetchpriority="high" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+    <!-- ------------------------------------------------------------------
+         Tracking & consentement — NON INSTALLÉS pour l'instant.
+         À câbler ici, dans cet ordre, quand les conteneurs dédiés à cette LP
+         auront été créés :
+           1. gtag('consent','default', ...)  — defaults refusés
+           2. Microsoft Clarity, chargé sur consent update analytics_storage
+           3. CMP  : https://cmp.iwantlead.fr/cmp/v1/cmp.js  (data-site-id)
+           4. GTM  : conteneur GTM-XXXXXXX + noscript en début de <body>
+         Voir le projet lp-matchmove-debarras pour l'implémentation de référence.
+         ------------------------------------------------------------------ -->
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

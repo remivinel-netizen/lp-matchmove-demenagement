@@ -1,0 +1,114 @@
+---
+import type { Field } from '../data/content';
+import { formLabels } from '../data/content';
+
+interface Props {
+  field: Field;
+}
+const { field } = Astro.props;
+const id = `f-${field.name}`;
+const req = field.required;
+
+/* Les champs code postal (départ / arrivée) partagent la même validation. */
+const isZip = field.name === 'code_postal' || field.name.startsWith('cp_');
+---
+
+{
+  field.type === 'image-choice' && (
+    <div
+      class="field"
+      data-field
+      data-kind={field.multiple ? 'checkbox' : 'radio'}
+      data-required={String(req)}
+    >
+      <fieldset class="form-step">
+        <legend class="field__label">
+          {field.label} {req && <span class="field__req">*</span>}
+        </legend>
+        <div class="choice-grid">
+          {field.options.map((opt) => (
+            <label class="choice-card">
+              <input
+                type={field.multiple ? 'checkbox' : 'radio'}
+                name={field.name}
+                value={opt.value}
+              />
+              <span class="choice-card__check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9.6 16.2 5.4 12l-1.4 1.4 5.6 5.6 12-12-1.4-1.4z" />
+                </svg>
+              </span>
+              <img src={opt.image} alt="" width="60" height="60" loading="lazy" />
+              <span>{opt.value}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <p class="field__error" data-error>
+        {formLabels.required}
+      </p>
+    </div>
+  )
+}
+
+{
+  field.type === 'choice' && (
+    <div
+      class="field"
+      data-field
+      data-kind={field.multiple ? 'checkbox' : 'radio'}
+      data-required={String(req)}
+    >
+      <fieldset class="form-step">
+        <legend class="field__label">
+          {field.label} {req && <span class="field__req">*</span>}
+        </legend>
+        <div class="pill-group">
+          {field.options.map((opt) => (
+            <label class="pill">
+              <input
+                type={field.multiple ? 'checkbox' : 'radio'}
+                name={field.name}
+                value={opt.value}
+              />
+              <span>{opt.value}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <p class="field__error" data-error>
+        {formLabels.required}
+      </p>
+    </div>
+  )
+}
+
+{
+  (field.type === 'text' || field.type === 'tel' || field.type === 'email') && (
+    <div
+      class="field"
+      data-field
+      data-kind={field.type}
+      data-required={String(req)}
+      data-pattern={isZip ? '^[0-9]{5}$' : undefined}
+      data-pattern-message={isZip ? formLabels.invalidZip : undefined}
+    >
+      <label class="field__label" for={id}>
+        {field.label} {req && <span class="field__req">*</span>}
+      </label>
+      <input
+        class="input"
+        id={id}
+        name={field.name}
+        type={field.type}
+        inputmode={field.inputmode}
+        autocomplete={field.autocomplete}
+        maxlength={isZip ? 5 : undefined}
+      />
+      {field.note && <p class="field__note">{field.note}</p>}
+      <p class="field__error" data-error>
+        {formLabels.required}
+      </p>
+    </div>
+  )
+}

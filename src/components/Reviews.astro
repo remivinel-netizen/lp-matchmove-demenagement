@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import { reviews, site } from '../data/content';
+
+interface Props {
+  heading?: string;
+  limit?: number;
+  flat?: boolean;
+}
+const { heading, limit, flat = false } = Astro.props;
+const items = limit ? reviews.items.slice(0, limit) : reviews.items;
+---
+
+<section class="section section--ash" id="avis">
+  <div class="container">
+    <div class="reviews__head">
+      <div>
+        {
+          heading ? (
+            <h2 class="title-sm">{heading}</h2>
+          ) : (
+            <>
+              <span class="eyebrow">{reviews.eyebrow}</span>
+              <h2 class="title-lg">
+                {reviews.titleBefore}
+                <span class="accent">{reviews.titleAccent}</span>
+              </h2>
+            </>
+          )
+        }
+      </div>
+      <a class="btn btn--ghost btn--sm" href={site.trustpilotUrl} target="_blank" rel="noopener">
+        {reviews.cta}
+      </a>
+    </div>
+
+    <div class:list={['reviews__track', { 'reviews__track--flat': flat }]}>
+      {
+        items.map((review) => (
+          <article class="review">
+            <div class="review__stars" aria-label="Note 5 sur 5">
+              {[0, 1, 2, 3, 4].map(() => (
+                <Icon name="star" size={18} />
+              ))}
+            </div>
+            <p class="review__text">{review.text}</p>
+            <h4 class="review__name">{review.name}</h4>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

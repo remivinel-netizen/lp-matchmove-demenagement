@@ -1,0 +1,22 @@
+---
+import { partners } from '../data/content';
+---
+
+<section class="section--tight section--olive">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 32px;">
+      <span class="eyebrow" style="color: var(--dark);">{partners.eyebrow}</span>
+      <h2 class="title-sm">
+        {partners.titleBefore}<span class="accent">{partners.titleAccent}</span>
+      </h2>
+    </div>
+
+    <div class="partners-grid">
+      {
+        partners.logos.map((logo) => (
+          <img src={logo.src} alt={logo.alt} height="56" loading="lazy" />
+        ))
+      }
+    </div>
+  </div>
+</section>

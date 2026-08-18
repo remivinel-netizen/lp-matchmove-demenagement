@@ -1,0 +1,40 @@
+---
+import { faq } from '../data/content';
+
+interface Props {
+  heading?: string;
+  items?: { q: string; a: string }[];
+}
+const { heading, items = faq.items } = Astro.props;
+---
+
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head">
+      {
+        heading ? (
+          <h2 class="title-sm">{heading}</h2>
+        ) : (
+          <>
+            <span class="eyebrow">{faq.eyebrow}</span>
+            <h2 class="title-lg">
+              {faq.titleBefore}
+              <span class="accent">{faq.titleAccent}</span>
+            </h2>
+          </>
+        )
+      }
+    </div>
+
+    <div class="faq-list">
+      {
+        items.map((item) => (
+          <details class="faq-item" name="faq">
+            <summary>{item.q}</summary>
+            <div class="faq-item__body">{item.a}</div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

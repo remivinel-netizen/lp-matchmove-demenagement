@@ -1,0 +1,26 @@
+---
+import { onlineSteps } from '../data/content';
+---
+
+<section class="section section--ash">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{onlineSteps.eyebrow}</span>
+      <h2 class="title-sm">
+        {onlineSteps.titleBefore}<span class="accent">{onlineSteps.titleAccent}</span>
+      </h2>
+    </div>
+
+    <div class="steps-grid">
+      {
+        onlineSteps.items.map((item) => (
+          <article class="step-card">
+            <img src={item.icon} alt="" width="40" height="40" loading="lazy" />
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+import { services } from '../data/content';
+---
+
+<section class="section" id="services">
+  <div class="container">
+    <div class="services-grid">
+      <div class="services__image">
+        <img
+          src="/assets/services.jpg"
+          alt="MatchMove vous accompagne pour tous les types de déménagement"
+          width="1280"
+          height="853"
+          loading="lazy"
+        />
+      </div>
+
+      <div>
+        <span class="eyebrow">{services.eyebrow}</span>
+        <h2 class="title-lg">
+          {services.titleBefore}<span class="accent">{services.titleAccent}</span>{services.titleAfter}
+        </h2>
+
+        <ul class="services__list">
+          {
+            services.items.map((item) => (
+              <li>
+                <Icon name="check" size={18} />
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <a class="btn btn--primary" href="#devis" data-cta="services">{services.cta}</a>
+      </div>
+    </div>
+  </div>
+</section>

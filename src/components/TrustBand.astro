@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+import { v2, partners } from '../data/content';
+---
+
+<section class="trustband">
+  <div class="container">
+    <ul class="trustband__stats">
+      {
+        v2.trustBand.stats.map((stat) => (
+          <li>
+            <Icon name="check" size={18} />
+            {stat}
+          </li>
+        ))
+      }
+      <li>
+        <Icon name="check" size={18} />
+        {v2.trustBand.zoneStat.pre}&nbsp;<span data-geo="zone">{v2.trustBand.zoneStat.fallback}</span>
+      </li>
+    </ul>
+    <p class="trustband__title">{v2.trustBand.partnersTitle}</p>
+    <div class="partners-grid partners-grid--sm">
+      {
+        partners.logos.map((logo) => (
+          <img src={logo.src} alt={logo.alt} height="44" loading="lazy" />
+        ))
+      }
+    </div>
+  </div>
+</section>

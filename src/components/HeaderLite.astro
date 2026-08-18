@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/content';
+
+interface Props {
+  logoHref?: string;
+}
+const { logoHref = '/' } = Astro.props;
+---
+
+<header class="header header--lite">
+  <div class="container header__inner">
+    <a class="header__logo" href={logoHref} aria-label={site.name}>
+      <img src="/assets/logo.png" alt={site.name} width="358" height="301" />
+    </a>
+    <div class="header__actions" style="margin-left: auto;">
+      <a class="header__phone header__phone--stacked" href={site.phoneHref} data-cta="header-phone">
+        <Icon name="phone" size={18} />
+        <span>
+          <strong>{site.phone}</strong>
+          <small>Réponse immédiate, 7j/7</small>
+        </span>
+      </a>
+    </div>
+  </div>
+</header>

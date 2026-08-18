@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import { hero, site } from '../data/content';
+---
+
+<section class="hero" id="top">
+  <div class="hero__inner">
+    <h1>{hero.title}</h1>
+    <p>{hero.text}</p>
+
+    <a class="hero__trustpilot" href={site.trustpilotUrl} target="_blank" rel="noopener">
+      <img src="/assets/trustpilot.png" alt="Avis Trustpilot MatchMove" width="606" height="108" />
+    </a>
+
+    <a class="btn btn--primary" href="#devis" data-cta="hero">{hero.cta}</a>
+
+    <div class="hero__badges">
+      <span class="hero__badge"><Icon name="clock" size={18} /> Devis gratuit en 1 heure</span>
+      <span class="hero__badge"><Icon name="bolt" size={18} /> Intervention sous 24h</span>
+      <span class="hero__badge"><Icon name="shield" size={18} /> Professionnels assurés</span>
+    </div>
+  </div>
+</section>

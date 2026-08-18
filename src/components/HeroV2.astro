@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import QuoteForm from './QuoteForm.astro';
+import { v2, site } from '../data/content';
+
+const segments = v2.hero.h1Segments;
+---
+
+<section class="hero-v2" id="devis">
+  <div class="container hero-v2__grid">
+    <div class="hero-v2__copy">
+      <h1 data-h1>
+        <span data-h1-seg>{v2.hero.h1Segment}</span>
+        <span data-geo="ville-a">{v2.hero.h1Geo}</span>
+        {v2.hero.h1Suffix}
+      </h1>
+      <p class="hero-v2__sub">{v2.hero.sub}</p>
+
+      <a class="hero-v2__trustpilot" href={site.trustpilotUrl} target="_blank" rel="noopener">
+        <img src="/assets/trustpilot.png" alt="Avis Trustpilot MatchMove : Excellent, 164 avis" width="606" height="108" />
+      </a>
+
+      <a class="hero-v2__phone" href={site.phoneHref} data-cta="hero-v2-phone">
+        <span class="hero-v2__phone-icon"><Icon name="phone" size={20} /></span>
+        <span>
+          <strong>{site.phone}</strong>
+          <small>{v2.hero.phoneLabel}</small>
+        </span>
+      </a>
+    </div>
+
+    <div class="hero-v2__form">
+      <QuoteForm embed title={v2.hero.formTitle} subtitle={v2.hero.formSub} />
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ segments }}>
+  // Message match Google Ads : ?k=maison|appartement|cave|succession|prix
+  // Ne touche que le segment métier : le segment géo est géré côté serveur.
+  const k = new URLSearchParams(window.location.search).get('k');
+  if (k && segments[k]) {
+    const seg = document.querySelector('[data-h1-seg]');
+    if (seg) seg.textContent = segments[k];
+  }
+</script>

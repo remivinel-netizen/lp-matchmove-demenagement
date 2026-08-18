@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { advantages } from '../data/content';
+---
+
+<section class="section" id="avantages">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{advantages.eyebrow}</span>
+      <h2 class="title-sm">
+        {advantages.titleBefore}<span class="accent">{advantages.titleAccent}</span>
+      </h2>
+    </div>
+
+    <div class="advantages-grid">
+      {
+        advantages.items.map((item) => (
+          <article class="advantage">
+            <span class="advantage__icon">
+              <Icon name={item.icon} size={26} />
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

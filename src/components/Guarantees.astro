@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+import { v2 } from '../data/content';
+---
+
+<section class="section section--mint section--tight">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 36px;">
+      <h2 class="title-sm">{v2.guarantees.title}</h2>
+    </div>
+    <ul class="guarantees-grid">
+      {
+        v2.guarantees.items.map((item) => (
+          <li class="guarantee">
+            <span class="guarantee__icon">
+              <Icon name={item.icon} size={22} />
+            </span>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

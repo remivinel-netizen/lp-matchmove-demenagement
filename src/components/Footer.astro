@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { footer, site } from '../data/content';
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="/assets/logo.png" alt={site.name} width="358" height="301" loading="lazy" />
+        <p>{footer.blurb}</p>
+      </div>
+      <a class="footer__phone" href={site.phoneHref} data-cta="footer-phone">
+        <Icon name="phone" size={18} />
+        {site.phone}
+      </a>
+    </div>
+
+    <div class="footer__bottom">
+      <span>{footer.copyright}</span>
+      <nav class="footer__legal" aria-label="Liens légaux">
+        {
+          footer.legal.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener">
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</footer>

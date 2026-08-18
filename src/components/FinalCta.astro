@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+import { finalCta, site } from '../data/content';
+
+interface Props {
+  dark?: boolean;
+  title?: string;
+  text?: string;
+  cta?: string;
+}
+const {
+  dark = false,
+  title = finalCta.title,
+  text = finalCta.text,
+  cta = finalCta.cta,
+} = Astro.props;
+---
+
+<section class:list={['final-cta', { 'final-cta--dark': dark }]}>
+  <div class="container">
+    <h2>{title}</h2>
+    <p>{text}</p>
+    <div class="final-cta__actions">
+      <a class:list={['btn', dark ? 'btn--primary' : 'btn--white']} href="#devis" data-cta="final">
+        {cta}
+      </a>
+      <a class="btn btn--amber" href={site.phoneHref} data-cta="final-phone">
+        <Icon name="phone" size={18} />
+        {site.phone}
+      </a>
+    </div>
+  </div>
+</section>

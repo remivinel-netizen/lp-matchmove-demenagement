@@ -1,0 +1,39 @@
+---
+import Icon from './Icon.astro';
+import { process } from '../data/content';
+
+const icons = ['grid', 'bolt', 'euro'];
+---
+
+<section class="section" id="principe">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{process.eyebrow}</span>
+      <h2 class="title-sm">
+        {process.titleBefore}<span class="accent">{process.titleAccent}</span>
+      </h2>
+      <p>{process.text}</p>
+    </div>
+
+    <ol class="timeline">
+      {
+        process.steps.map((step, i) => (
+          <li class="timeline__item">
+            <span class="timeline__icon">
+              <Icon name={icons[i]} size={24} />
+            </span>
+            <div class="timeline__content">
+              <span class="timeline__subtitle">{step.subtitle}</span>
+              <h3 class="timeline__title">{step.title}</h3>
+              <p class="timeline__text">{step.text}</p>
+            </div>
+            <div class="timeline__info">
+              <h4 class="timeline__date">{step.date}</h4>
+              <p class="timeline__place">{step.place}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

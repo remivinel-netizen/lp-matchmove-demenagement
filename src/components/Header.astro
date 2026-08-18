@@ -1,0 +1,64 @@
+---
+import Icon from './Icon.astro';
+import { nav, site } from '../data/content';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__logo" href="#top" aria-label={site.name}>
+      <img src="/assets/logo.png" alt={site.name} width="358" height="301" />
+    </a>
+
+    <nav class="header__nav" aria-label="Navigation principale">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <button class="header__burger" type="button" aria-label="Ouvrir le menu" data-menu-open>
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="header__actions">
+      <a class="header__phone" href={site.phoneHref} data-cta="header-phone">
+        <Icon name="phone" size={18} />
+        {site.phone}
+      </a>
+      <a class="btn btn--primary btn--sm" href="#devis" data-cta="header-devis">Demander un devis</a>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" data-menu hidden>
+  <div class="mobile-menu__head">
+    <img src="/assets/logo.png" alt={site.name} width="358" height="301" />
+    <button class="mobile-menu__close" type="button" aria-label="Fermer le menu" data-menu-close>
+      &times;
+    </button>
+  </div>
+  {nav.map((item) => <a class="mobile-menu__link" href={item.href} data-menu-link>{item.label}</a>)}
+  <a class="mobile-menu__link" href={site.phoneHref}>{site.phone}</a>
+  <a class="btn btn--primary" href="#devis" data-menu-link>Demander un devis</a>
+</div>
+
+<script>
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+
+  const setOpen = (open: boolean) => {
+    if (!menu) return;
+    menu.dataset.open = String(open);
+    menu.hidden = !open;
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) closeBtn?.focus();
+    else openBtn?.focus();
+  };
+
+  openBtn?.addEventListener('click', () => setOpen(true));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  menu?.querySelectorAll('[data-menu-link]').forEach((link) =>
+    link.addEventListener('click', () => setOpen(false)),
+  );
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu?.dataset.open === 'true') setOpen(false);
+  });
+</script>

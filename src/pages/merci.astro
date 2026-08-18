@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import HeaderLite from '../components/HeaderLite.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/content';
+---
+
+<Base
+  title="Demande envoyée — MatchMove"
+  description="Votre demande de devis a bien été enregistrée. Nous revenons vers vous sous 1 heure."
+  noindex
+>
+  <HeaderLite />
+  <main>
+    <section class="section merci">
+      <div class="container">
+        <div class="merci__card">
+          <div class="form-success__icon">
+            <Icon name="check" size={30} />
+          </div>
+          <h1 class="title-sm">Merci, votre demande est bien enregistrée.</h1>
+          <p class="merci__lead">
+            Nos équipes analysent votre projet et reviennent vers vous avec un
+            <strong>devis personnalisé sous 1 heure</strong>.
+          </p>
+
+          <ol class="merci__steps">
+            <li>
+              <span class="merci__num">1</span>
+              <div>
+                <strong>Analyse de votre besoin</strong>
+                <p>Nous étudions votre volume, vos adresses et vos dates, puis nous identifions les déménageurs disponibles et les mieux notés dans votre région.</p>
+              </div>
+            </li>
+            <li>
+              <span class="merci__num">2</span>
+              <div>
+                <strong>Devis sous 1 heure</strong>
+                <p>Vous recevez le meilleur rapport qualité-prix du marché : une offre claire, détaillée et sans engagement, par le canal que vous avez choisi.</p>
+              </div>
+            </li>
+            <li>
+              <span class="merci__num">3</span>
+              <div>
+                <strong>On s'occupe de tout</strong>
+                <p>Vous validez le devis, votre déménageur prend contact avec vous et gère l'opération du chargement jusqu'à l'installation.</p>
+              </div>
+            </li>
+          </ol>
+
+          <p class="merci__urgent">Besoin d'une réponse immédiate ?</p>
+          <a class="btn btn--primary" href={site.phoneHref} data-cta="merci-phone">
+            <Icon name="phone" size={18} />
+            {site.phone}
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

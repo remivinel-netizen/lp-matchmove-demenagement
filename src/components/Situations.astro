@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { v2 } from '../data/content';
+---
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 36px;">
+      <h2 class="title-sm">{v2.situations.title}</h2>
+    </div>
+    <div class="situations-grid">
+      {
+        v2.situations.items.map((item) => (
+          <a class="situation" href="#devis" data-cta="situation">
+            <span class="advantage__icon">
+              <Icon name={item.icon} size={24} />
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+            <span class="situation__link">Estimer mon déménagement</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,463 @@
+---
+import FormField from './FormField.astro';
+import Icon from './Icon.astro';
+import { quoteForm, formLabels, site, type Field } from '../data/content';
+
+/* Carte du formulaire seule. Deux modes :
+   - standard (v1) : intro + indicateur à pastilles, posé dans QuoteSection
+   - embed (v2)    : en-tête compact + barre de progression, posé dans le hero */
+interface Props {
+  embed?: boolean;
+  title?: string;
+  subtitle?: string;
+}
+const { embed = false, title, subtitle } = Astro.props;
+
+type Row = { pair: false; field: Field } | { pair: true; fields: Field[] };
+
+function buildRows(fields: Field[]): Row[] {
+  const rows: Row[] = [];
+  let buffer: Field[] = [];
+  const flush = () => {
+    if (buffer.length) {
+      rows.push({ pair: true, fields: buffer });
+      buffer = [];
+    }
+  };
+  for (const field of fields) {
+    if ('half' in field && field.half) {
+      buffer.push(field);
+      if (buffer.length === 2) flush();
+    } else {
+      flush();
+      rows.push({ pair: false, field });
+    }
+  }
+  flush();
+  return rows;
+}
+
+const stepRows = quoteForm.steps.map((step) => buildRows(step.fields));
+const lastIndex = quoteForm.steps.length - 1;
+
+const rgpdHtml = `${formLabels.rgpdBefore}<a href="${site.legal.donnees}" target="_blank" rel="noopener">${formLabels.rgpdLink}</a>${formLabels.rgpdAfter}`;
+---
+
+<div class:list={['quote__card', { 'quote__card--embed': embed }]} data-quote-card>
+  {
+    embed ? (
+      <div class="quote__head">
+        <h2 class="quote__head-title">{title ?? 'Estimez votre déménagement en 2 minutes'}</h2>
+        {subtitle && <p class="quote__head-sub">{subtitle}</p>}
+      </div>
+    ) : (
+      <div class="quote__intro">
+        <span class="eyebrow">Devis gratuit</span>
+        <h2 class="title-sm">{title ?? 'Recevez votre devis personnalisé en 1 heure'}</h2>
+        <p>{subtitle ?? '10 questions, moins de 2 minutes. Gratuit et sans engagement.'}</p>
+      </div>
+    )
+  }
+
+  {
+    embed ? (
+      <div
+        class="quote-progress"
+        role="progressbar"
+        aria-valuemin="1"
+        aria-valuemax={quoteForm.steps.length}
+        aria-valuenow="1"
+        aria-label="Progression du formulaire"
+        data-indicator
+      >
+        <div class="quote-progress__meta">
+          <span data-progress-label>Étape 1 sur {quoteForm.steps.length}</span>
+          <span>2 minutes</span>
+        </div>
+        <div class="quote-progress__track">
+          <div class="quote-progress__fill" data-progress-fill style="width:12%"></div>
+        </div>
+      </div>
+    ) : (
+      <div
+        class="steps-indicator"
+        role="progressbar"
+        aria-valuemin="1"
+        aria-valuemax={quoteForm.steps.length}
+        aria-valuenow="1"
+        aria-label="Progression du formulaire"
+        data-indicator
+      >
+        {quoteForm.steps.map((step, i) => (
+          <div class="steps-indicator__item" data-state={i === 0 ? 'active' : 'todo'}>
+            <span class="steps-indicator__num">{i + 1}</span>
+            <span class="steps-indicator__label">{step.title}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  <p class="form-alert" role="alert" data-alert>
+    {formLabels.errorText}
+    <a href={site.phoneHref}>{site.phone}</a>.
+  </p>
+
+  <form data-quote-form novalidate>
+    <div class="hp-field" aria-hidden="true">
+      <label for="mm-website">Ne pas remplir</label>
+      <input type="text" id="mm-website" name="_hp" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="_t" data-timestamp value="" />
+
+    {
+      quoteForm.steps.map((step, i) => (
+        <fieldset class="form-step" data-step={i} hidden={i !== 0}>
+          <legend class="sr-only">{step.title}</legend>
+
+          {i === lastIndex && (
+            <p class="form-trust">
+              <span class="review__stars">
+                {[0, 1, 2, 3, 4].map(() => (
+                  <Icon name="star" size={14} />
+                ))}
+              </span>
+              <strong>Excellent</strong> · {formLabels.trustLine}
+            </p>
+          )}
+
+          {stepRows[i].map((row) =>
+            row.pair ? (
+              <div class="field-grid">
+                {row.fields.map((field) => (
+                  <FormField field={field} />
+                ))}
+              </div>
+            ) : (
+              <FormField field={row.field} />
+            ),
+          )}
+
+          {i === lastIndex && <p class="rgpd" set:html={rgpdHtml} />}
+
+          <div class:list={['form-nav', { 'form-nav--final': i === lastIndex }]}>
+            {i > 0 && (
+              <button class="btn btn--ghost btn--sm" type="button" data-prev>
+                {formLabels.prev}
+              </button>
+            )}
+            {i < lastIndex ? (
+              <button class="btn btn--primary" type="button" data-next>
+                {i === lastIndex - 1 ? formLabels.nextEstimate : formLabels.next}
+              </button>
+            ) : (
+              <button class="btn btn--primary" type="submit" data-submit>
+                {formLabels.submit}
+              </button>
+            )}
+          </div>
+          {i === lastIndex && <p class="form-reassurance">{formLabels.reassurance}</p>}
+        </fieldset>
+      ))
+    }
+  </form>
+</div>
+
+<script>
+  const MESSAGES = {
+    required: 'Ce champ est obligatoire.',
+    email: 'Veuillez saisir une adresse email valide.',
+    phone: 'Veuillez saisir un numéro de téléphone valide.',
+  };
+
+  const TRACK_KEYS = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'utm_id',
+    'gclid',
+    'gbraid',
+    'wbraid',
+    'fbclid',
+    'msclkid',
+    'ttclid',
+    'li_fat_id',
+  ] as const;
+
+  const STORAGE_KEY = 'mm_tracking';
+
+  function readTracking(): Record<string, string> {
+    let stored: Record<string, string> = {};
+    try {
+      stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+    } catch {
+      stored = {};
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    let dirty = false;
+
+    for (const key of TRACK_KEYS) {
+      const value = params.get(key);
+      if (value && value !== stored[key]) {
+        stored[key] = value.slice(0, 300);
+        dirty = true;
+      }
+    }
+
+    // première visite : on fige la page d'atterrissage et le référent
+    if (!stored.landing_page) {
+      stored.landing_page = window.location.href.slice(0, 500);
+      stored.first_referrer = document.referrer.slice(0, 500);
+      dirty = true;
+    }
+
+    if (dirty) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+      } catch {
+        /* mode privé : on continue sans persistance */
+      }
+    }
+
+    return stored;
+  }
+
+  const tracking = readTracking();
+
+  const card = document.querySelector<HTMLElement>('[data-quote-card]');
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+  const alertBox = document.querySelector<HTMLElement>('[data-alert]');
+  const indicator = document.querySelector<HTMLElement>('[data-indicator]');
+  const indicatorItems = Array.from(
+    document.querySelectorAll<HTMLElement>('.steps-indicator__item'),
+  );
+  const progressFill = document.querySelector<HTMLElement>('[data-progress-fill]');
+  const progressLabel = document.querySelector<HTMLElement>('[data-progress-label]');
+  const steps = Array.from(document.querySelectorAll<HTMLFieldSetElement>('[data-step]'));
+  const timestamp = document.querySelector<HTMLInputElement>('[data-timestamp]');
+
+  // Progression affichée : démarre à 12% (endowed progress), jamais à 0.
+  const PROGRESS = [12, 40, 68, 92];
+
+  if (form && steps.length) {
+    if (timestamp) timestamp.value = String(Date.now());
+
+    let current = 0;
+
+    const push = (payload: Record<string, unknown>) => {
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({ ...payload, page: window.location.pathname });
+    };
+
+    const setStep = (index: number) => {
+      current = index;
+      steps.forEach((step, i) => {
+        step.hidden = i !== index;
+      });
+      indicatorItems.forEach((item, i) => {
+        item.dataset.state = i < index ? 'done' : i === index ? 'active' : 'todo';
+      });
+      if (progressFill) progressFill.style.width = `${PROGRESS[index] ?? 100}%`;
+      if (progressLabel) progressLabel.textContent = `Étape ${index + 1} sur ${steps.length}`;
+      indicator?.setAttribute('aria-valuenow', String(index + 1));
+      card?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      push({ event: 'form_step', form: 'devis_demenagement', step: index + 1 });
+    };
+
+    const setError = (field: HTMLElement, message: string | null) => {
+      const target = field.querySelector<HTMLElement>('[data-error]');
+      if (message) {
+        field.dataset.invalid = 'true';
+        if (target) target.textContent = message;
+      } else {
+        delete field.dataset.invalid;
+      }
+    };
+
+    const validateField = (field: HTMLElement): boolean => {
+      const kind = field.dataset.kind;
+      const required = field.dataset.required === 'true';
+
+      if (kind === 'checkbox' || kind === 'radio') {
+        const inputs = Array.from(field.querySelectorAll<HTMLInputElement>('input'));
+        const checked = inputs.some((input) => input.checked);
+        if (required && !checked) {
+          setError(field, MESSAGES.required);
+          return false;
+        }
+        setError(field, null);
+        return true;
+      }
+
+      const input = field.querySelector<HTMLInputElement>('input');
+      if (!input) return true;
+      const value = input.value.trim();
+
+      if (!value) {
+        if (required) {
+          setError(field, MESSAGES.required);
+          return false;
+        }
+        setError(field, null);
+        return true;
+      }
+
+      const pattern = field.dataset.pattern;
+      if (pattern && !new RegExp(pattern).test(value)) {
+        setError(field, field.dataset.patternMessage || MESSAGES.required);
+        return false;
+      }
+
+      if (kind === 'email' && (value.length > 254 || !/^[^\s@]{1,64}@[^\s@.]+(?:\.[^\s@.]+)+$/.test(value))) {
+        setError(field, MESSAGES.email);
+        return false;
+      }
+
+      if (kind === 'tel' && value.replace(/\D/g, '').length < 9) {
+        setError(field, MESSAGES.phone);
+        return false;
+      }
+
+      setError(field, null);
+      return true;
+    };
+
+    const validateStep = (index: number): boolean => {
+      const fields = Array.from(steps[index].querySelectorAll<HTMLElement>('[data-field]'));
+      let firstInvalid: HTMLElement | null = null;
+      for (const field of fields) {
+        if (!validateField(field) && !firstInvalid) firstInvalid = field;
+      }
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true });
+        return false;
+      }
+      return true;
+    };
+
+    form.querySelectorAll<HTMLButtonElement>('[data-next]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (validateStep(current)) setStep(Math.min(current + 1, steps.length - 1));
+      });
+    });
+
+    form.querySelectorAll<HTMLButtonElement>('[data-prev]').forEach((btn) => {
+      btn.addEventListener('click', () => setStep(Math.max(current - 1, 0)));
+    });
+
+    // efface l'erreur dès que l'utilisateur corrige
+    form.addEventListener('change', (event) => {
+      const field = (event.target as HTMLElement)?.closest<HTMLElement>('[data-field]');
+      if (field?.dataset.invalid === 'true') validateField(field);
+    });
+    form.addEventListener('input', (event) => {
+      const field = (event.target as HTMLElement)?.closest<HTMLElement>('[data-field]');
+      if (field?.dataset.invalid === 'true') validateField(field);
+    });
+
+    // Entrée = étape suivante plutôt que soumission prématurée
+    form.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'BUTTON' || target.tagName === 'TEXTAREA') return;
+      if (current < steps.length - 1) {
+        event.preventDefault();
+        if (validateStep(current)) setStep(current + 1);
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!validateStep(current)) return;
+
+      const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]');
+      const initialLabel = submitBtn?.textContent ?? '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi en cours…';
+      }
+      if (alertBox) alertBox.dataset.visible = 'false';
+
+      const data = new FormData(form);
+      const payload = {
+        type_logement: String(data.get('type_logement') ?? ''),
+        volume: String(data.get('volume') ?? ''),
+        cp_depart: String(data.get('cp_depart') ?? '').trim(),
+        cp_arrivee: String(data.get('cp_arrivee') ?? '').trim(),
+        etage_depart: String(data.get('etage_depart') ?? ''),
+        ascenseur_depart: String(data.get('ascenseur_depart') ?? ''),
+        acces_camion: String(data.get('acces_camion') ?? ''),
+        date_demenagement: String(data.get('date_demenagement') ?? ''),
+        formule: String(data.get('formule') ?? ''),
+        options: data.getAll('options').map(String),
+        prenom: String(data.get('prenom') ?? '').trim(),
+        nom: String(data.get('nom') ?? '').trim(),
+        telephone: String(data.get('telephone') ?? '').trim(),
+        email: String(data.get('email') ?? '').trim(),
+        whatsapp: String(data.get('whatsapp') ?? '').trim(),
+        contact_prefere: String(data.get('contact_prefere') ?? ''),
+        _hp: String(data.get('_hp') ?? ''),
+        _t: Number(data.get('_t') ?? 0),
+        meta: {
+          page_url: window.location.href,
+          referrer: document.referrer,
+          user_agent: navigator.userAgent,
+          submitted_at: new Date().toISOString(),
+          utm_source: tracking.utm_source ?? '',
+          utm_medium: tracking.utm_medium ?? '',
+          utm_campaign: tracking.utm_campaign ?? '',
+          utm_term: tracking.utm_term ?? '',
+          utm_content: tracking.utm_content ?? '',
+          utm_id: tracking.utm_id ?? '',
+          gclid: tracking.gclid ?? '',
+          gbraid: tracking.gbraid ?? '',
+          wbraid: tracking.wbraid ?? '',
+          fbclid: tracking.fbclid ?? '',
+          msclkid: tracking.msclkid ?? '',
+          ttclid: tracking.ttclid ?? '',
+          li_fat_id: tracking.li_fat_id ?? '',
+          landing_page: tracking.landing_page ?? '',
+          first_referrer: tracking.first_referrer ?? '',
+        },
+      };
+
+      try {
+        /* ------------------------------------------------------------------
+           Branchement du lead — À CÂBLER
+           Aucune intégration n'est active pour l'instant : le tunnel est
+           fonctionnel de bout en bout et redirige vers /merci.
+           Pour l'activer : créer functions/api/lead.ts (Cloudflare Pages
+           Functions) qui relaie vers le webhook Make, puis remplacer null
+           par '/api/lead' ci-dessous.
+           ------------------------------------------------------------------ */
+        const LEAD_ENDPOINT: string | null = null;
+
+        if (LEAD_ENDPOINT) {
+          const response = await fetch(LEAD_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        } else {
+          console.info('[devis] lead prêt à être envoyé', payload);
+        }
+
+        push({ event: 'lead_submitted', form: 'devis_demenagement' });
+        // La page /merci sert de signal de conversion (page vue) pour Google Ads / GTM.
+        window.location.assign('/merci');
+      } catch (error) {
+        console.error('[devis] envoi impossible', error);
+        if (alertBox) alertBox.dataset.visible = 'true';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = initialLabel;
+        }
+      }
+    });
+  }
+</script>

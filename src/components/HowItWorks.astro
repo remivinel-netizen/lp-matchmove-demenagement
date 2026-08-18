@@ -1,0 +1,26 @@
+---
+import { v2 } from '../data/content';
+---
+
+<section class="section section--ash section--tight">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 36px;">
+      <h2 class="title-sm">{v2.how.title}</h2>
+    </div>
+    <ol class="how-grid">
+      {
+        v2.how.steps.map((step, i) => (
+          <li class="how-step">
+            <span class="how-step__num">{i + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="section-cta">
+      <a class="btn btn--primary" href="#devis" data-cta="how">{v2.how.cta}</a>
+      <p class="section-cta__note">{v2.how.ctaNote}</p>
+    </div>
+  </div>
+</section>

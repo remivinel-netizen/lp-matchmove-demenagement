@@ -1,0 +1,9 @@
+name = "lp-matchmove-demenagement"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-05"
+
+# Aucune Pages Function n'est utilisée pour l'instant (pas d'API lead, pas de
+# middleware géo). Quand le formulaire sera branché sur Make, créer
+# functions/api/lead.ts et déclarer le secret MAKE_WEBHOOK_URL dans
+# Cloudflare Pages > Settings > Variables and Secrets (Production + Preview),
+# ou en local dans .dev.vars (ignoré par git).
