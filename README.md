@@ -147,3 +147,9 @@ seront captés dès qu'un conteneur GTM sera installé.
 - `hero.jpg` et `services.jpg` — visuels déménagement
 - `form/*.png` — icônes du formulaire (appartement, maison, local, autres sont réutilisables)
 - `partners/*.png` — à confirmer pour l'offre déménagement
+
+`logo.png` a été refait à partir du logo Débarras : monogramme et « MATCHMOVE »
+repris tels quels, ligne du bas recomposée en **Outfit Bold**, calée sur la
+largeur exacte de « MATCHMOVE ». Sans accents, comme le faisait le logo
+d'origine. À remplacer si MatchMove fournit un logo officiel.
+`favicon.png` est le monogramme seul, sans texte : rien à changer.
