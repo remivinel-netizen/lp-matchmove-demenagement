@@ -93,12 +93,47 @@ transmis à Make.
 > `REQUIRED_FIELDS` **et** au `payload` dans `functions/api/lead.ts`, sinon il
 > ne remontera pas dans Make.
 
+## Tracking & consentement
+
+Tout se passe dans le `<head>` de `src/layouts/Base.astro`, dans cet ordre — qui
+n'est pas négociable :
+
+1. **Consent defaults** — tout est `denied` sauf `security_storage`, avec
+   `wait_for_update: 500`. Doit précéder le CMP.
+2. **Microsoft Clarity** (`y4bv41o568`, projet dédié à cette LP) — le snippet
+   n'est *pas* posé en direct. Un intercepteur sur `dataLayer.push` attend un
+   `gtag('consent','update', { analytics_storage: 'granted' })` avant de charger
+   le tag. Pas de consentement, pas d'enregistrement de session.
+3. **CMP IwlCMP** — injecté seulement si la constante `CMP_SITE_ID` est
+   renseignée en haut du fichier.
+4. **GTM** — pas encore installé.
+
+> ⚠️ **`CMP_SITE_ID` est vide.** Tant qu'il l'est, le CMP n'est pas injecté,
+> donc aucun signal de consentement n'est émis, donc **Clarity ne se charge
+> jamais**. C'est volontaire : la LP reste strictement sans traceur plutôt que
+> d'enregistrer des sessions sans consentement. Renseigner cette constante est
+> la seule chose à faire pour activer le tracking.
+
+Les scripts portent `is:inline` : Astro les laisse en place au lieu de les
+regrouper et de les différer, ce qui préserve l'ordre d'exécution.
+
+### Événements dataLayer déjà émis
+
+| Événement        | Quand                                    |
+| ---------------- | ---------------------------------------- |
+| `form_step`      | à chaque étape du tunnel (`step: 1..4`)  |
+| `lead_submitted` | à la soumission réussie                  |
+
+Ils partent déjà dans `window.dataLayer` et seront captés dès qu'un conteneur
+GTM sera en place. La page `/merci` sert de signal de conversion (page vue) pour
+Google Ads.
+
 ## Non installé volontairement
 
-| Brique                     | Où la brancher                                  |
-| -------------------------- | ------------------------------------------------ |
-| Personnalisation géo       | `functions/_middleware.ts` (attributs `data-geo` déjà en place dans `HeroV2` et `TrustBand`) |
-| GTM, Clarity, CMP          | `src/layouts/Base.astro` (emplacement commenté)  |
+| Brique                | Où la brancher                                    |
+| --------------------- | -------------------------------------------------- |
+| Personnalisation géo  | `functions/_middleware.ts` (attributs `data-geo` déjà en place dans `HeroV2` et `TrustBand`) |
+| GTM                   | `src/layouts/Base.astro` (emplacement commenté) + `<noscript>` en début de `<body>` |
 
 Les événements `dataLayer` (`form_step`, `lead_submitted`) sont déjà émis : ils
 seront captés dès qu'un conteneur GTM sera installé.
