@@ -49,6 +49,9 @@ const localBusiness = {
    Vider cette constante suffit à désactiver CMP + Clarity d'un coup. */
 const CMP_SITE_ID: string = 'rhj25avk';
 
+/* Conteneur GTM dédié à cette LP. */
+const GTM_ID: string = 'GTM-T7SMZX93';
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -159,12 +162,31 @@ const faqSchema = {
       )
     }
 
-    <!-- GTM : à installer plus tard. Le conteneur va ici, suivi du <noscript>
-         en tout début de <body>. Les événements dataLayer (form_step,
-         lead_submitted) sont déjà émis par le formulaire et seront captés
-         automatiquement. -->
+    <!-- Google Tag Manager -->
+    <script is:inline define:vars={{ GTM_ID }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', GTM_ID);
+    </script>
+    <!-- End Google Tag Manager -->
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <slot />
   </body>
 </html>
