@@ -68,7 +68,10 @@ const faqSchema = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <!-- Noindex volontaire sur toutes les pages (site en pré-prod / hors indexation).
+         Appliqué inconditionnellement via Base.astro : toute nouvelle page qui
+         utilise ce layout en hérite automatiquement, pas besoin de passer la prop. -->
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#57A479" />
 
