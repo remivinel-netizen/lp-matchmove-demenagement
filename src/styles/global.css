@@ -1142,6 +1142,9 @@ textarea {
 
 .services__image img {
   width: 100%;
+  /* Sans height:auto, l'attribut height="853" du HTML s'applique comme mise en
+     forme par défaut et écrase le ratio : l'image est étirée verticalement. */
+  height: auto;
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
