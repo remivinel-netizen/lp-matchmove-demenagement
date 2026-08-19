@@ -104,15 +104,17 @@ n'est pas négociable :
    n'est *pas* posé en direct. Un intercepteur sur `dataLayer.push` attend un
    `gtag('consent','update', { analytics_storage: 'granted' })` avant de charger
    le tag. Pas de consentement, pas d'enregistrement de session.
-3. **CMP IwlCMP** — injecté seulement si la constante `CMP_SITE_ID` est
-   renseignée en haut du fichier.
+3. **CMP IwlCMP** (`rhj25avk`, site « Matchmove demenagement ») — injecté
+   seulement si la constante `CMP_SITE_ID` est renseignée en haut du fichier.
+   Vider cette constante désactive CMP et Clarity d'un seul geste.
 4. **GTM** — pas encore installé.
 
-> ⚠️ **`CMP_SITE_ID` est vide.** Tant qu'il l'est, le CMP n'est pas injecté,
-> donc aucun signal de consentement n'est émis, donc **Clarity ne se charge
-> jamais**. C'est volontaire : la LP reste strictement sans traceur plutôt que
-> d'enregistrer des sessions sans consentement. Renseigner cette constante est
-> la seule chose à faire pour activer le tracking.
+> ⚠️ **Domaines autorisés.** Le portail IwlCMP n'accepte les preuves de
+> consentement que depuis les domaines déclarés — actuellement
+> `lp-matchmove-demenagement.pages.dev`, qui couvre aussi les déploiements de
+> preview. À la bascule sur un domaine définitif, penser à l'ajouter côté
+> portail. Le champ « domaine du cookie » est volontairement vide : `.pages.dev`
+> figure sur la Public Suffix List, les navigateurs y refusent tout cookie.
 
 Les scripts portent `is:inline` : Astro les laisse en place au lieu de les
 regrouper et de les différer, ce qui préserve l'ordre d'exécution.

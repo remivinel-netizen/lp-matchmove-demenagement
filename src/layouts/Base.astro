@@ -42,11 +42,12 @@ const localBusiness = {
 /* Tracking                                                             */
 /* ------------------------------------------------------------------ */
 
-/* ⚠ À RENSEIGNER : data-site-id du CMP IwlCMP pour cette landing page.
-   Tant que cette constante est vide, le CMP n'est pas injecté — et donc
-   Clarity ne se déclenche pas, faute de signal de consentement. La LP reste
-   alors strictement sans traceur. */
-const CMP_SITE_ID: string = '';
+/* data-site-id du CMP IwlCMP, site « Matchmove demenagement ».
+   Domaine autorisé côté portail : lp-matchmove-demenagement.pages.dev.
+   ⚠ À la bascule sur un domaine définitif, l'ajouter aux domaines autorisés
+   dans le portail IwlCMP, sinon les preuves de consentement seront refusées.
+   Vider cette constante suffit à désactiver CMP + Clarity d'un coup. */
+const CMP_SITE_ID: string = 'rhj25avk';
 
 const faqSchema = {
   '@context': 'https://schema.org',
